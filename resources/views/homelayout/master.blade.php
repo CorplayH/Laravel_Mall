@@ -24,6 +24,7 @@
     <!-- Main Template Styles-->
     <link id="mainStyles" rel="stylesheet" media="screen" href="{{asset('org/unishop/css')}}/styles.min.css">
     <!-- Modernizr-->
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{asset('org/unishop/js')}}/modernizr.min.js"></script>
     {{--<link href="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">--}}
 

@@ -5,8 +5,9 @@ Route::get('/','Home\HomeController@index');
 // 列表路由
 Route::get('/lists/{category}','Home\HomeController@lists')->name('lists');
 // 商品详情路由
-Route::get('/content','Home\HomeController@content');
-
+Route::get('/product/{goods}','Home\HomeController@product')->name('product');
+// 商品详情路由
+Route::get('/getProduct/{attrs}/{goods}','Home\HomeController@getSelectedProduct')->name('selectedProduct');
 
 
 

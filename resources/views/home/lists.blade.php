@@ -31,10 +31,10 @@
                                 @if($goods['is_recommend'])
                                     <div class="product-badge bg-danger">Recommend!</div>
                                 @endif
-                                <a class="product-thumb" href="shop-single.html"><img src="{{$goods['images'][0]}}" alt="Product"></a>
+                                <a class="product-thumb" href="/product/{{$goods['id']}}"><img src="{{$goods['images'][0]}}" alt="Product"></a>
                                 <div class="product-card-body">
-                                    <div class="product-category"><a href="#">{{$goods->thirdName->cname}}</a></div>
-                                    <h3 class="product-title"><a href="shop-single.html">{{$goods['gname']}}</a></h3>
+                                    <div class="product-category"><span class="text-muted">{{$goods->thirdName->cname}}</span></div>
+                                    <h3 class="product-title"><a href="/product/{{$goods['id']}}">{{$goods['gname']}}</a></h3>
                                     <div class="product-category"><a href="#">from</a></div>
                                     <h4 class="product-price">
                                         ${{$goods['price']}}
