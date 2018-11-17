@@ -14,6 +14,9 @@
             width: 100%;
             display: block;
         }
+        .mywishlist i{
+            color: #f44336;
+        }
     </style>
 @endpush
 
@@ -141,27 +144,28 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="product-card mb-30" style="box-sizing: border-box;">
                         <div class="product-badge bg-danger">Recommend!</div>
-                        <a class="product-thumb" href="shop-single.html"><img src="{{$goods['images'][1]}}"
-                                                                              alt="Product"></a>
+                        <a class="product-thumb" href="/product/{{$goods->id}}"><img src="{{$goods['images'][0]}}"
+                                                                                     alt="Product"></a>
                         <div class="product-card-body">
-                            <div class="product-category"><a href="#">Smart home</a></div>
-                            <h3 class="product-title"><a href="shop-single.html">{{$goods['gname']}}</a></h3>
+                            <h3 class="product-title"><a href="/product/{{$goods->id}}">{{$goods['gname']}}</a></h3>
                             <h4 class="product-price">
                                 ${{$goods['price']}}
                             </h4>
                         </div>
-                        <div class="product-button-group"><a class="product-button btn-wishlist" href="#"><i class="icon-heart"></i><span>Wishlist</span></a>
-
-                            <a
-                                class="product-button" href="#" data-toast data-toast-type="success" data-toast-position="topRight"
-                                data-toast-icon="icon-check-circle" data-toast-title="Product"
-                                data-toast-message="successfuly added to cart!"><i class="icon-shopping-cart"></i><span>To Cart</span></a>
+                        <div class="product-button-group">
+                            <a class="product-button @if($goods->hasWish($goods)) mywishlist @endif"  href="javascript:;" onclick="makeWish(this,{{$goods->id}})">
+                                <i class="icon-heart"></i>
+                                <span>Wishlist</span>
+                            </a>
+                            <a class="product-button" href="/product/{{$goods->id}}">
+                                <i class="icon-shopping-cart"></i>
+                                <span>To Cart</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-        <div class="text-center"><a class="btn btn-outline-secondary" href="shop-grid-ls.html">View All Products</a></div>
     </section>
     <!-- CTA-->
     <section class="fw-section padding-top-4x padding-bottom-8x" style="background-image: url(img/banners/shop-banner-bg-02.jpg);"><span
@@ -337,3 +341,23 @@
     </section>
 
 @endsection
+@push('js')
+<script>
+    function makeWish(obj,goods) {
+        $.ajax({
+            type:'get',
+            url: '/user/makeWish/'+goods,
+            success: function (res) {
+                if (res.code ==0){
+                    $(obj).removeClass('mywishlist');
+                    toastr.warning("Removed from your wishlist", "Removed !", {"showMethod": "slideDown", "hideMethod": "slideUp", timeOut: 2000});
+                }
+                if (res.code ==1){
+                    $(obj).addClass('mywishlist');
+                    toastr.success("Saved to your wish list", "Great !", {"showMethod": "slideDown", "hideMethod": "slideUp", timeOut: 2000});
+                }
+            }
+        })
+    }
+</script>
+@endpush

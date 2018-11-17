@@ -1,7 +1,6 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "Today Mall/laravel",
+    "keywords": ["E-commerce", "laravel"],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -12,7 +11,8 @@
         "houdunwang/arr": "^1.0",
         "johnlui/aliyun-oss": "~2.0",
         "laravel/framework": "5.7.*",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "moment/moment": "^2.22"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
@@ -29,7 +29,10 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/helper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

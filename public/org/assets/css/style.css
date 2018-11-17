@@ -9,3 +9,14 @@ NOTE:
 ------
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+.userMenu{
+    display: block;
+    color: #0b0c0f;
+    text-decoration: none;
+    margin: 5px 0px;
+}
+.userMenu :hover {
+    color: #0b76cc;
+}
+
+

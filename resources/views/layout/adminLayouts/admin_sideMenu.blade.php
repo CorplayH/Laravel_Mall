@@ -43,33 +43,33 @@
                     </li>
                 </ul>
             </li>
-            <li class=" nav-item"><a href="javascript:;"><i class="ft-file-text"></i><span class="menu-title" data-i18n="">订单管理</span></a>
-                <ul class="menu-content">
-                    <li>
-                        <a class="menu-item" href="">订单列表</a>
-                    </li>
-                </ul>
-            </li>
-            <li class=" nav-item"><a href="javascript:;"><i class="ft-user"></i><span class="menu-title" data-i18n="">用户管理</span></a>
-                <ul class="menu-content">
-                    <li>
-                        <a class="menu-item" href="">用户列表</a>
-                    </li>
-                </ul>
-            </li>
-            <li class=" nav-item"><a href="javascript:;"><i class="ft-lock"></i><span class="menu-title" data-i18n="">权限管理</span></a>
-                <ul class="menu-content">
-                    <li>
-                        <a class="menu-item" href="">后台用户</a>
-                    </li>
-                    <li>
-                        <a class="menu-item" href="">角色列表</a>
-                    </li>
-                    <li>
-                        <a class="menu-item" href="">权限列表</a>
-                    </li>
-                </ul>
-            </li>
+            {{--<li class=" nav-item"><a href="javascript:;"><i class="ft-file-text"></i><span class="menu-title" data-i18n="">订单管理</span></a>--}}
+                {{--<ul class="menu-content">--}}
+                    {{--<li>--}}
+                        {{--<a class="menu-item" href="">订单列表</a>--}}
+                    {{--</li>--}}
+                {{--</ul>--}}
+            {{--</li>--}}
+            {{--<li class=" nav-item"><a href="javascript:;"><i class="ft-user"></i><span class="menu-title" data-i18n="">用户管理</span></a>--}}
+                {{--<ul class="menu-content">--}}
+                    {{--<li>--}}
+                        {{--<a class="menu-item" href="">用户列表</a>--}}
+                    {{--</li>--}}
+                {{--</ul>--}}
+            {{--</li>--}}
+            {{--<li class=" nav-item"><a href="javascript:;"><i class="ft-lock"></i><span class="menu-title" data-i18n="">权限管理</span></a>--}}
+                {{--<ul class="menu-content">--}}
+                    {{--<li>--}}
+                        {{--<a class="menu-item" href="">后台用户</a>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a class="menu-item" href="">角色列表</a>--}}
+                    {{--</li>--}}
+                    {{--<li>--}}
+                        {{--<a class="menu-item" href="">权限列表</a>--}}
+                    {{--</li>--}}
+                {{--</ul>--}}
+            {{--</li>--}}
         </ul>
     </div>
     <div class="navigation-background"></div>

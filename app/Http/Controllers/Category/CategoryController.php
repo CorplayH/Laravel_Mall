@@ -19,8 +19,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('created_at', 'desc')->paginate(10);
-        
+        $categories = Category::get();
+//        dd($categories->toArray());
         return view('category.index', compact('categories'));
     }
     

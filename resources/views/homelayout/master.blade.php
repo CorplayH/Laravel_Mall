@@ -11,6 +11,8 @@
     <meta name="author" content="Rokaux">
     <!-- Mobile Specific Meta Tag-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Favicon and Apple Icons-->
     @stack('css')
     <link rel="icon" type="image/x-icon" href="/favio.ico">
@@ -21,14 +23,35 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/favio.ico">
     <!-- Vendor Styles including: Bootstrap, Font Icons, Plugins, etc.-->
     <link rel="stylesheet" media="screen" href="{{asset('org/unishop/css')}}/vendor.min.css">
+    {{--layui_css--}}
+    <link rel="stylesheet" href="{{asset('org/layui/css/layui.css')}}" media="all">
     <!-- Main Template Styles-->
     <link id="mainStyles" rel="stylesheet" media="screen" href="{{asset('org/unishop/css')}}/styles.min.css">
     <!-- Modernizr-->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <script src="{{asset('org/unishop/js')}}/modernizr.min.js"></script>
-    {{--<link href="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">--}}
+    {{--layui_js--}}
+    <script src="{{asset('org/layui/layui.js')}}"></script>
+    {{--vue--}}
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{asset('/org/app-assets')}}/vendors/css/extensions/toastr.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('/org/app-assets')}}/css/plugins/extensions/toastr.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('/org/assets')}}/css/style.css">
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
 
 </head>
+{{--{{dd($smallCart->toArray())}}--}}
+
 <!-- Body-->
 <body>
 <!-- Header-->
@@ -48,8 +71,7 @@
                         </button>
                         <div class="dropdown-menu mega-dropdown">
                             <div class="row">
-
-                                @foreach($categories as $category)
+                                @foreach($categoriesHome as $category)
                                     <div class="col-sm-3">
                                         <a class="d-block navi-link text-center mb-30" href="/lists/{{$category['id']}}">
                                             <img class="d-block" src="{{$category['images']}} " style="width: 137px; height: 137px">
@@ -57,9 +79,7 @@
                                         </a>
                                     </div>
                                 @endforeach
-
                             </div>
-
                         </div>
                     </div>
                     <form class="input-group" method="get"><span class="input-group-btn">
@@ -73,61 +93,85 @@
         <div class="toolbar d-flex">
             <div class="toolbar-item visible-on-mobile mobile-menu-toggle"><a href="#">
                     <div><i class="icon-menu"></i><span class="text-label">Menu</span></div>
-                </a></div>
+                </a>
+            </div>
+            @if(!auth()->user())
+                <div class="toolbar-item hidden-on-mobile">
+                    <a href="{{route('login')}}">
+                        <div><i class="icon-user"></i>
+                            <span class="text-label">Sign In / Up</span>
+                        </div>
+                    </a>
+                    <div class="toolbar-dropdown text-center px-3">
+                        <p class="text-xs mb-3 pt-2">Sign in to your account or register new one to have full control over your orders,
+                            receive
+                            bonuses and more.</p>
+                        <a class="btn btn-primary btn-sm btn-block" href="{{route('login')}}">Sign In</a>
+                        <p class="text-xs text-muted mb-2">New customer?&nbsp;<a href="{{route('register')}}">Register</a></p>
+                    </div>
+                </div>
+            @else
+                <div class="toolbar-item hidden-on-mobile">
+                    <a href="javascript:;">
+                        <div>
+                            <img class="img-thumbnail rounded-circle" style="height: 70px; width: 70px;"
+                                 src="{{auth()->user()->icon ?auth()->user()->icon :''  }}"
+                                 alt="Image">
+                        </div>
+                    </a>
+                    <ul class="toolbar-dropdown text-center px-3">
+                        <p style="margin-bottom: 10px">{{auth()->user()->name}}</p>
+                        <a class="userMenu" href="{{route('user.userInfo')}}"><i class="icon-user">&nbsp;</i>My account</a>
+                        <hr/>
+                        <a class="btn btn-outline-secondary btn-sm btn-block" href="{{route('logout')}}">Logout</a>
+                    </ul>
+                </div>
+            @endif
+            @if(auth()->user())
+                <div class="toolbar-item" id="smallCart">
+                    <a href="{{route('cart.cartList')}}">
+                        <div>
+                        <span class="cart-icon">
+                            <i class="icon-shopping-cart"></i>
+                            <span class="count-label" id="smallCartNum" numCart="{{count($smallCart)}}">{{count($smallCart)}}</span>
+                        </span>
+                            <span class="text-label">Cart</span>
+                        </div>
+                    </a>
+                    <div class="toolbar-dropdown cart-dropdown widget-cart hidden-on-mobile">
+                        <!-- Entry-->
+                        @if(count($smallCart)>0)
+                            @foreach($smallCart as $cart)
+                                <div class="entry" id="entry">
+                                    <div class="entry-thumb"><a href="{{route('cart.cartList')}}">
+                                            <img src="{{$cart->goods->images[0]}}" alt="Product"></a></div>
+                                    <div class="entry-content">
+                                        <h4 class="entry-title">
+                                            <a href="/product/{{$cart->goods->id}}">{{$cart->goods->gname}}</a>
+                                        </h4>
+                                        <span class="entry-meta">{{$cart->num}} x {{$cart->unitPrice}}</span>
+                                    </div>
+                                    <div class="entry-delete"><i class="icon-x" onclick="del(this,{{$cart->id}})"></i></div>
+                                </div>
+                            @endforeach
+                                <div class="d-flex">
+                                    <div class="pr-2 w-50"><a class="btn btn-secondary btn-sm btn-block mb-0" href="{{route('cart.cartList')}}">Expand
+                                            Cart</a></div>
+                                    <div class="pl-2 w-50"><a class="btn btn-primary btn-sm btn-block mb-0" href="/order">Checkout</a></div>
+                                </div>
+                        @else
+                            <div class="entry" id="entry">
+                                <div class="entry-content">
+                                    <h4 class="text-center text-md">
+                                        <span>Nothing here yet, Let's go shopping!</span>
+                                    </h4>
+                                </div>
+                            </div>
+                        @endif
 
-            <div class="toolbar-item hidden-on-mobile"><a href="account-login.html">
-                    <div><i class="icon-user"></i><span class="text-label">Sign In / Up</span></div>
-                </a>
-                <div class="toolbar-dropdown text-center px-3">
-                    <p class="text-xs mb-3 pt-2">Sign in to your account or register new one to have full control over your orders, receive
-                        bonuses and more.</p><a class="btn btn-primary btn-sm btn-block" href="account-login.html">Sign In</a>
-                    <p class="text-xs text-muted mb-2">New customer?&nbsp;<a href="account-login.html">Register</a></p>
-                </div>
-            </div>
-            <div class="toolbar-item"><a href="cart.html">
-                    <div><span class="cart-icon"><i class="icon-shopping-cart"></i><span class="count-label">3   </span></span><span
-                            class="text-label">Cart</span></div>
-                </a>
-                <div class="toolbar-dropdown cart-dropdown widget-cart hidden-on-mobile">
-                    <!-- Entry-->
-                    <div class="entry">
-                        <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/04.jpg"
-                                                                                 alt="Product"></a></div>
-                        <div class="entry-content">
-                            <h4 class="entry-title"><a href="shop-single.html">Canon EOS M50 Mirrorless Camera</a></h4><span
-                                class="entry-meta">1 x $910.00</span>
-                        </div>
-                        <div class="entry-delete"><i class="icon-x"></i></div>
-                    </div>
-                    <!-- Entry-->
-                    <div class="entry">
-                        <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/05.jpg"
-                                                                                 alt="Product"></a></div>
-                        <div class="entry-content">
-                            <h4 class="entry-title"><a href="shop-single.html">Apple iPhone X 256 GB Space Gray</a></h4><span
-                                class="entry-meta">1 x $1,450.00</span>
-                        </div>
-                        <div class="entry-delete"><i class="icon-x"></i></div>
-                    </div>
-                    <!-- Entry-->
-                    <div class="entry">
-                        <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/06.jpg"
-                                                                                 alt="Product"></a></div>
-                        <div class="entry-content">
-                            <h4 class="entry-title"><a href="shop-single.html">HP LaserJet Pro Laser Printer</a></h4><span
-                                class="entry-meta">1 x $188.50</span>
-                        </div>
-                        <div class="entry-delete"><i class="icon-x"></i></div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-gray-dark py-2 mb-0"><span class='text-muted'>Subtotal:</span> &nbsp;$2,548.50</p>
-                    </div>
-                    <div class="d-flex">
-                        <div class="pr-2 w-50"><a class="btn btn-secondary btn-sm btn-block mb-0" href="cart.html">Expand Cart</a></div>
-                        <div class="pl-2 w-50"><a class="btn btn-primary btn-sm btn-block mb-0" href="checkout.html">Checkout</a></div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
         <!-- Mobile Menu-->
         <div class="mobile-menu">
@@ -140,10 +184,23 @@
             </div>
             <!-- Toolbar-->
             <div class="toolbar">
-
-                <div class="toolbar-item"><a href="account-login.html">
-                        <div><i class="icon-user"></i><span class="text-label">Sign In / Up</span></div>
-                    </a></div>
+                @if(!auth()->user())
+                    <div class="toolbar-item">
+                        <a href="{{route('login')}}">
+                            <div><i class="icon-user"></i><span class="text-label">Sign In / Up</span></div>
+                        </a>
+                    </div>
+                @else
+                    <div class="toolbar-item">
+                        <a href="javascript:;">
+                            <div>
+                                <img class="img-thumbnail rounded-circle" style="height: 70px; width: 70px;"
+                                     src="{{auth()->user()->icon ?auth()->user()->icon :'' }}"
+                                     alt="Image">
+                            </div>
+                        </a>
+                    </div>
+                @endif
             </div>
             <!-- Slideable (Mobile) Menu-->
             <nav class="slideable-menu">
@@ -287,18 +344,14 @@
             </button>
             <div class="dropdown-menu mega-dropdown">
                 <div class="row">
-
-
-                    @foreach($categories as $category)
+                    @foreach($categoriesHome as $category)
                         <div class="col-sm-3">
-                            <a class="d-block navi-link text-center mb-30" href="shop-grid-ls.html">
+                            <a class="d-block navi-link text-center mb-30" href="/lists/{{$category['id']}}">
                                 <img class="d-block" src="{{$category['images']}}" style="width: 137px; height: 137px">
                                 <span class="text-gray-dark">{{$category['cname']}}</span>
                             </a>
                         </div>
                     @endforeach
-
-
                 </div>
             </div>
         </div>
@@ -311,7 +364,7 @@
                 <li class="has-megamenu {{ active_class(if_route('lists')) }}"><a href="javascript:;">Browse Products</a>
 
                     <ul class="mega-menu">
-                        @foreach($categories as $category)
+                        @foreach($categoriesHome as $category)
                             <li>
                                 <a href="/lists/{{$category['id']}}">
                                     <span class="mega-menu-title">{{$category['cname']}}</span>
@@ -420,54 +473,50 @@
         <!-- Toolbar ( Put toolbar here only if you enable sticky navbar )-->
         <div class="toolbar">
             <div class="toolbar-inner">
-                <div class="toolbar-item"><a href="product-comparison.html">
-                        <div><span class="compare-icon"><i class="icon-repeat"></i><span class="count-label">3</span></span><span
-                                class="text-label">Compare</span></div>
-                    </a></div>
-                <div class="toolbar-item"><a href="cart.html">
-                        <div><span class="cart-icon"><i class="icon-shopping-cart"></i><span class="count-label">3   </span></span><span
-                                class="text-label">Cart</span></div>
-                    </a>
-                    <div class="toolbar-dropdown cart-dropdown widget-cart">
-                        <!-- Entry-->
-                        <div class="entry">
-                            <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/04.jpg"
-                                                                                     alt="Product"></a></div>
-                            <div class="entry-content">
-                                <h4 class="entry-title"><a href="shop-single.html">Canon EOS M50 Mirrorless Camera</a></h4><span
-                                    class="entry-meta">1 x $910.00</span>
+                @if(auth()->user())
+                    <div class="toolbar-item" id="smallCart">
+                        <a href="{{route('cart.cartList')}}">
+                            <div>
+                        <span class="cart-icon">
+                            <i class="icon-shopping-cart"></i>
+                            <span class="count-label" id="smallCartNum" numCart="{{count($smallCart)}}">{{count($smallCart)}}</span>
+                        </span>
+                                <span class="text-label">Cart</span>
                             </div>
-                            <div class="entry-delete"><i class="icon-x"></i></div>
-                        </div>
-                        <!-- Entry-->
-                        <div class="entry">
-                            <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/05.jpg"
-                                                                                     alt="Product"></a></div>
-                            <div class="entry-content">
-                                <h4 class="entry-title"><a href="shop-single.html">Apple iPhone X 256 GB Space Gray</a></h4><span
-                                    class="entry-meta">1 x $1,450.00</span>
-                            </div>
-                            <div class="entry-delete"><i class="icon-x"></i></div>
-                        </div>
-                        <!-- Entry-->
-                        <div class="entry">
-                            <div class="entry-thumb"><a href="shop-single.html"><img src="{{asset('org/unishop/img')}}/shop/widget/06.jpg"
-                                                                                     alt="Product"></a></div>
-                            <div class="entry-content">
-                                <h4 class="entry-title"><a href="shop-single.html">HP LaserJet Pro Laser Printer</a></h4><span
-                                    class="entry-meta">1 x $188.50</span>
-                            </div>
-                            <div class="entry-delete"><i class="icon-x"></i></div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-gray-dark py-2 mb-0"><span class='text-muted'>Subtotal:</span> &nbsp;$2,548.50</p>
-                        </div>
-                        <div class="d-flex">
-                            <div class="pr-2 w-50"><a class="btn btn-secondary btn-sm btn-block mb-0" href="cart.html">Expand Cart</a></div>
-                            <div class="pl-2 w-50"><a class="btn btn-primary btn-sm btn-block mb-0" href="checkout.html">Checkout</a></div>
+                        </a>
+                        <div class="toolbar-dropdown cart-dropdown widget-cart hidden-on-mobile">
+                            <!-- Entry-->
+                            @if(count($smallCart)>0)
+                                @foreach($smallCart as $cart)
+                                    <div class="entry" id="entry">
+                                        <div class="entry-thumb"><a href="{{route('cart.cartList')}}">
+                                                <img src="{{$cart->goods->images[0]}}" alt="Product"></a></div>
+                                        <div class="entry-content">
+                                            <h4 class="entry-title">
+                                                <a href="/product/{{$cart->goods->id}}">{{$cart->goods->gname}}</a>
+                                            </h4>
+                                            <span class="entry-meta">{{$cart->num}} x {{$cart->unitPrice}}</span>
+                                        </div>
+                                        <div class="entry-delete"><i class="icon-x" onclick="del(this,{{$cart->id}})"></i></div>
+                                    </div>
+                                @endforeach
+                                <div class="d-flex">
+                                    <div class="pr-2 w-50"><a class="btn btn-secondary btn-sm btn-block mb-0" href="{{route('cart.cartList')}}">Expand
+                                            Cart</a></div>
+                                    <div class="pl-2 w-50"><a class="btn btn-primary btn-sm btn-block mb-0" href="/order">Checkout</a></div>
+                                </div>
+                            @else
+                                <div class="entry" id="entry">
+                                    <div class="entry-content">
+                                        <h4 class="text-center text-md">
+                                            <span>Nothing here yet, Let's go shopping!</span>
+                                        </h4>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -479,98 +528,22 @@
 <footer class="site-footer" style="background-image: url(img/footer-bg.png);">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6">
-                <!-- Categories-->
-                <section class="widget widget-links widget-light-skin">
-                    <h3 class="widget-title">Shop Departments</h3>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <ul>
-                                <li><a href="#">Computers &amp; Accessories</a></li>
-                                <li><a href="#">Smartphones &amp; Tablets</a></li>
-                                <li><a href="#">TV, Video &amp; Audio</a></li>
-                                <li><a href="#">Cameras, Photo &amp; Video</a></li>
-                                <li><a href="#">Headphones</a></li>
-                                <li><a href="#">Wearable Electronics</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <ul>
-                                <li><a href="#">Printers &amp; Ink</a></li>
-                                <li><a href="#">Video Games</a></li>
-                                <li><a href="#">Car Electronics</a></li>
-                                <li><a href="#">Smart Home, IoT</a></li>
-                                <li><a href="#">Musical Instruments</a></li>
-                                <li><a href="#">Software</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <!-- About Us-->
-                <section class="widget widget-links widget-light-skin">
-                    <h3 class="widget-title">About Us</h3>
-                    <ul>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">About Unishop</a></li>
-                        <li><a href="#">Our Story</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Our Blog</a></li>
-                        <li><a href="#">Contacts</a></li>
-                    </ul>
-                </section>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <!-- Account / Shipping Info-->
-                <section class="widget widget-links widget-light-skin">
-                    <h3 class="widget-title">Account &amp; Shipping Info</h3>
-                    <ul>
-                        <li><a href="#">My Account</a></li>
-                        <li><a href="#">Shipping Rates & Policies</a></li>
-                        <li><a href="#">Refunds & Replacements</a></li>
-                        <li><a href="#">Taxes</a></li>
-                        <li><a href="#">Delivery Info</a></li>
-                        <li><a href="#">Affiliate Program</a></li>
-                    </ul>
-                </section>
-            </div>
-        </div>
-        <hr class="hr-light mt-2 margin-bottom-2x hidden-md-down">
-        <div class="row">
-            <div class="col-lg-3 col-md-6">
+            <div class="col-lg-6 col-md-6">
                 <!-- Contact Info-->
                 <section class="widget widget-light-skin">
                     <h3 class="widget-title">Get In Touch With Us</h3>
-                    <p class="text-white">Phone: +1 (900) 33 169 7720</p>
+                    <p class="text-white">Phone: +(64) 225678008</p>
                     <ul class="list-unstyled text-sm text-white">
                         <li><span class="opacity-50">Monday-Friday:&nbsp;</span>9.00 am - 8.00 pm</li>
                         <li><span class="opacity-50">Saturday:&nbsp;</span>10.00 am - 6.00 pm</li>
                     </ul>
-                    <p><a class="navi-link-light" href="#">support@unishop.com</a></p><a
-                        class="social-button shape-circle sb-facebook sb-light-skin" href="#"><i class="socicon-facebook"></i></a><a
-                        class="social-button shape-circle sb-twitter sb-light-skin" href="#"><i class="socicon-twitter"></i></a><a
-                        class="social-button shape-circle sb-instagram sb-light-skin" href="#"><i class="socicon-instagram"></i></a><a
-                        class="social-button shape-circle sb-google-plus sb-light-skin" href="#"><i class="socicon-googleplus"></i></a>
-                </section>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <!-- Mobile App Buttons-->
-                <section class="widget widget-light-skin">
-                    <h3 class="widget-title">Our Mobile App</h3><a class="market-button apple-button mb-light-skin" href="#"><span
-                            class="mb-subtitle">Download on the</span><span class="mb-title">App Store</span></a><a
-                        class="market-button google-button mb-light-skin" href="#"><span class="mb-subtitle">Download on the</span><span
-                            class="mb-title">Google Play</span></a><a class="market-button windows-button mb-light-skin" href="#"><span
-                            class="mb-subtitle">Download on the</span><span class="mb-title">Windows Store</span></a>
                 </section>
             </div>
             <div class="col-lg-6">
                 <!-- Subscription-->
                 <section class="widget widget-light-skin">
                     <h3 class="widget-title">Be Informed</h3>
-                    <form class="row"
-                          action="//rokaux.us12.list-manage.com/subscribe/post?u=c7103e2c981361a6639545bd5&amp;amp;id=1194bb7544"
-                          method="post" target="_blank" novalidate>
+                    <form class="row" action="#" method="post" target="_blank" novalidate>
                         <div class="col-sm-9">
                             <div class="input-group input-light">
                                 <input class="form-control" type="email" name="EMAIL" placeholder="Your e-mail"><span
@@ -587,14 +560,12 @@
                             <button class="btn btn-primary btn-block mt-0" type="submit">Subscribe</button>
                         </div>
                     </form>
-                    <div class="pt-3"><img class="d-block" style="width: 324px;" alt="Cerdit Cards"
-                                           src="{{asset('org/unishop/img')}}/credit-cards-footer.png"></div>
                 </section>
             </div>
         </div>
         <!-- Copyright-->
         <p class="footer-copyright">© All rights reserved. Made with &nbsp;<i class="icon-heart text-danger"></i><a
-                href="http://rokaux.com/" target="_blank"> &nbsp;by rokaux</a></p>
+                href="#" target="_blank"> &nbsp;by Corplay 2018</a></p>
     </div>
 </footer>
 <!-- Back To Top Button--><a class="scroll-to-top-btn" href="#"><i class="icon-chevron-up"></i></a>
@@ -603,6 +574,23 @@
 <!-- JavaScript (jQuery) libraries, plugins and custom scripts-->
 <script src="{{asset('org/unishop/js')}}/vendor.min.js"></script>
 <script src="{{asset('org/unishop/js')}}/scripts.min.js"></script>
+<script src="{{asset('/org/app-assets')}}/vendors/js/extensions/sweetalert2.all.js" type="text/javascript"></script>
+<script src="{{asset('/org/app-assets')}}/vendors/js/extensions/toastr.min.js" type="text/javascript"></script>
 @stack('js')
+<script>
+    function del(obj, value) {
+        $.ajax({
+            type: 'get',
+            url: '/cart/productDelete/' + value,
+            success: function (res) {
+                if (res.code === 1) {
+                    $('#smallCartNum').text(res.num);
+                    $(obj).parents('#entry').remove();
+                }
+            }
+        })
+    }
+</script>
+@include('layout.message')
 </body>
 </html>

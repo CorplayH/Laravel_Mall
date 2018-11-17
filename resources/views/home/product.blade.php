@@ -105,23 +105,23 @@
                     </div>
                 @endforeach
 
-
                 <div class="row align-items-end pb-4">
                     <div class="col-sm-4">
                         <div class="form-group mb-0">
                             <label for="quantity">Quantity</label>
-                            <input id="quantity" class="form-control" type="number" min="1" max="{{$product['stock']}}" name="quantity"
+                            <input id="quantity" class="form-control" type="number" min="1" value="1" max="{{$product['stock']}}"
+                                   name="quantity"
                                    onblur="checkNum(this)">
 
                         </div>
                     </div>
                     <div class="col-sm-8">
                         <div class="pt-4 hidden-sm-up"></div>
-                        <button id="addBtn" {{$product['stock'] == 0? 'disabled': '' }} class="btn btn-primary btn-block m-0" data-toast
-                                data-toast-type="success" data-toast-position="topRight"
-                                data-toast-icon="icon-check-circle" data-toast-title="Product"
-                                data-toast-message="successfuly added to cart!"> {{$product['stock'] == 0? 'Out of stock': 'Add to cart' }}
-                        </button>
+                        {{--加入购物车--}}
+                        <a id="addBtn" href="javascript:;" onclick="addToCart()"
+                           {{$product['stock'] == 0? 'disabled': '' }} class="btn btn-primary btn-block m-0"> {{$product['stock'] == 0? 'Out of stock': 'Add to cart' }}
+                        </a>
+
                     </div>
                 </div>
                 <div class="pt-1 mb-4 text-medium" id="stock">Stock:&nbsp;{{$product['stock']}}</div>
@@ -130,6 +130,8 @@
                     <div class="mt-2 mb-2">
                         <button class="btn btn-outline-secondary btn-sm btn-wishlist"><i class="icon-heart"></i>&nbsp;To Wishlist</button>
                     </div>
+
+
                     <div class="mt-2 mb-2"><span class="text-muted">Share:&nbsp;&nbsp;</span>
                         <div class="d-inline-block"><a class="social-button shape-rounded sb-facebook" href="#" data-toggle="tooltip"
                                                        data-placement="top" title="Facebook"><i class="socicon-facebook"></i></a><a
@@ -436,6 +438,7 @@
 @endsection
 @push('js')
     <script>
+        var productId = {{$product['id']}};
         $('.attrSelect').change(function () {
             // 循环当前页面的所有select元素
             var attrs = [];
@@ -449,34 +452,38 @@
                 method: 'get',
                 dataType: 'json',
                 success: function (res) {
-                    console.log(res);
                     $('.goodsPrice').html('$' + res.price);
                     if (res.stock == 0 || !res || !res.stock) {
                         $('#addBtn').attr('disabled', 'disabled').html('Out of stock');
                         $('#stock').html('Stock: ' + 0);
                     } else {
+                        console.log(res);
                         $('#addBtn').removeAttr('disabled').html('Add to cart');
                         $('#stock').html('Stock: ' + res.stock);
                         $('#quantity').attr('max', res.stock);
+                        // 获取选择后的 货品 ID
+                        productId = res.id
                     }
                 }
-
             })
-
-
         });
 
         function checkNum(obj) {
             // 获取当前输入购买数量的值
-            var num = $(obj).val();
+            var num = Number($(obj).val());
             // 获取当前商品可以购买的最大数量
-            var maxNum = $(obj).attr('max');
+            var maxNum = Number($(obj).attr('max'));
             // 判断如果当前的超过了最大值,提示用户,不能购买这么多,然后将填写的值改成最大的
             if (num > maxNum) {
                 $(obj).val(maxNum);
                 return false;
             }
         }
-
+        function addToCart() {
+            var goods_id = {{$goods['id']}};
+            var product_id = productId;
+            var num = $('#quantity').val();
+            location.href = '/cart/addToCart/' + goods_id + '/' + product_id + '/' + num;
+        }
     </script>
 @endpush

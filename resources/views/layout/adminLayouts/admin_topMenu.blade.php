@@ -89,7 +89,7 @@
                                             </div>
                                         </div></a><a href="javascript:void(0)">
                                         <div class="media">
-                                            <div class="media-left"><span class="avatar avatar-sm rounded-circle"><img src="{{asset('/org/app-assets')}}/images/portrait/small/avatar-s-19.png" alt="avatar"></span></div>
+                                            <div class="media-left"><span class="avatar avatar-sm rounded-circle"><img src="{{asset('/org/app-assets')}}/images/portrait/small/avatar-s-1.jpg" alt="avatar"></span></div>
                                             <div class="media-body">
                                                 <h6 class="media-heading text-bold-700">Tonny Deep<i class="ft-circle font-small-2 danger float-right"></i></h6>
                                                 <p class="notification-text font-small-3 text-muted text-bold-600">We will start new project development...</p><small>
@@ -103,18 +103,15 @@
                     <li class="dropdown dropdown-user nav-item">
                         <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
                             <span class="avatar avatar-online">
-                                <img src="{{auth('admin')->user()->icon}}" alt="avatar">
+                                <img src="{{asset('/org/app-assets')}}/images/portrait/small/avatar-s-1.jpg" alt="avatar">
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="arrow_box_right"><a class="dropdown-item" href="#"><span class="avatar avatar-online">
-                                        <img src="{{auth('admin')->user()->icon}}" alt="avatar">
+                                        <img src="{{asset('/org/app-assets')}}/images/portrait/small/avatar-s-1.jpg" alt="avatar">
                                         <span class="user-name text-bold-700 ml-1"></span>{{auth('admin')->user()->nickname}}</span></a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="user-profile.html"><i class="ft-user"></i> Edit Profile</a>
-                                <a class="dropdown-item" href="email-application.html"><i class="ft-mail"></i> My Inbox</a>
-                                <a class="dropdown-item" href="project-summary.html"><i class="ft-check-square"></i> Task</a>
-                                <a class="dropdown-item" href="chat-application.html"><i class="ft-message-square"></i> Chats</a>
+                                <a class="dropdown-item" href="#"><i class="ft-user"></i> Edit Profile</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{route('admin.logout')}}"><i class="ft-power"></i> Logout</a>
                             </div>

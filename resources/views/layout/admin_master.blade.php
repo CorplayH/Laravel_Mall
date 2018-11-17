@@ -11,6 +11,7 @@
     <div class="content-wrapper" style="padding-top: 10px; !important;">
         <div class="content-wrapper-before"></div>
         @yield('content')
+
         {{--<div class="content-body">--}}
             {{--<div class="row">--}}
 
@@ -22,11 +23,12 @@
 
             {{--</div>--}}
         {{--</div>--}}
+
     </div>
 </div>
 <!-- ////////////////////////////////////////////////////////////////////////////-->
 @include('layout.adminLayouts.admin_footer')
-@include('layout.massage')
+@include('layout.message')
 @stack('js')
 </body>
 </html>

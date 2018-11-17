@@ -44,12 +44,12 @@ class GoodsController extends Controller
     {
         $request['thirdCategory'] = $request['category_id'][2];
         $goods = Goods::create($request->all());
-        foreach ($request->attrs as $attr){
-            GoodsAttrs::create([
-                'goods_id' => $goods['id'],
-                'goodsAttribute_id' =>$attr,
-            ]);
-        }
+            foreach ($request->attrs as $attr){
+                GoodsAttrs::create([
+                    'goods_id' => $goods['id'],
+                    'goodsAttribute_id' =>$attr,
+                ]);
+            }
         return redirect()->route('goods.goods.index')->with('success', '商品添加成功');
     }
 

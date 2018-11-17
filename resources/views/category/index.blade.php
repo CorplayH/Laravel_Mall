@@ -1,6 +1,6 @@
 @extends('layout.admin_master')
-
 @section('content')
+
     <div class="card">
         <div class="card-header">
             <ul class="nav" style="border-bottom: 1px solid #0b0c0f">
@@ -28,9 +28,9 @@
                         <tbody>
                         @foreach($categories as $category)
                             <tr role="row" class="odd">
-                                <td>{{$category->id}}</td>
-                                <td>{{$category->cname}}</td>
-                                <td>{{$category->category ?$category->category->cname : '顶级分类'}}</td>
+                                <td>{{$category['id']}}</td>
+                                <td>{{$category['cname']}}</td>
+                                <td>{{$category->category ? $category->category->cname : '顶级分类'}}</td>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
                                         <a href="{{route('category.category.edit',$category)}}"
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="card-footer text-muted">
-            {{$categories->links()}}
+{{--            {{$categories->links()}}--}}
         </div>
     </div>
 @endsection

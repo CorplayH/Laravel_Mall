@@ -17,7 +17,7 @@ class CreateProductsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('goods_id')->comment('所属商品id');
             $table->string('attrs')->comment('货品的属性组合');
-            $table->smallInteger('addPrice')->comment('附加价格');
+            $table->decimal('addPrice',8,2)->comment('附加价格');
             $table->smallInteger('stock')->comment('库存数量');
             $table->timestamps();
         });

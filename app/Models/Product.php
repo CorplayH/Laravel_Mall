@@ -24,4 +24,20 @@ class Product extends Model
         // 将新组合的中文属性数据返回,注意,要返回json数据,并且不要转码
         return json_encode($newArr,JSON_UNESCAPED_UNICODE);
     }
+    
+    
+    public function getProductAttr()
+    {
+        // 获取当前货品数据的属性组合
+        $attrs = $this->attrs;
+        $newArr = [];
+        // 将attrs的数字id转成名字
+        foreach ($attrs as $k => $attr){
+            $sonAttr = GoodsAttribute::find($attr);
+            $fatherAttr = GoodsAttribute::find($sonAttr['pid']);
+            $newArr['father'][] = $fatherAttr;
+            $newArr['son'][] = $sonAttr;
+        }
+        return $newArr;
+    }
 }

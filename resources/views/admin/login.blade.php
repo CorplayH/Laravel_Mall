@@ -63,7 +63,7 @@
 </div>
 <!-- ////////////////////////////////////////////////////////////////////////////-->
 @include('layout.adminLayouts.admin_footer')
-@include('layout.massage')
+@include('layout.message')
 <!-- BEGIN PAGE VENDOR JS-->
 <script src="{{asset('/org/app-assets')}}/vendors/js/forms/validation/jqBootstrapValidation.js" type="text/javascript"></script>
 <!-- END PAGE VENDOR JS-->

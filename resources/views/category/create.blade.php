@@ -31,6 +31,8 @@
                         </select>
                     </div>
                 </div>
+
+
                 <div class="form-group row" id="upload">
                     <label class="col-md-2 label-control text-center">顶级分类图</label>
                     <div class="col-md-10">
@@ -43,6 +45,8 @@
                         </blockquote>
                     </div>
                 </div>
+
+
                 <div class="form-group row" id="attrs" style="display: none">
                     <label class="col-md-2 label-control text-center">可用属性</label>
                     <div class="col-md-10">
@@ -94,7 +98,6 @@
         });
         layui.use('upload', function () {
             var upload = layui.upload;
-
             //执行实例
             var uploadInst = upload.render({
                 elem: '#goodsPics' //绑定元素
@@ -106,7 +109,6 @@
                         // 将返回的上传图片的地址,用img标签展示
                         $('<img src="' + res.path + '" /><input type="hidden" name="images" value="' + res.path + '">').appendTo('#box');
                     }
-
                 }
                 , error: function () {
                     //请求异常回调

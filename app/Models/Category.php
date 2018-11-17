@@ -22,11 +22,10 @@ class Category extends Model
     {
         //取得所有分类, 转为数组格式
         $data = Category::get()->toArray();
-        
         //获得数组树状图
         return Arr::tree($data, 'cname', 'id', 'pid');
     }
-    
+
     /**
      * @param $level integer 1,2,3
      *
@@ -42,7 +41,7 @@ class Category extends Model
         }
         return $leveled_category;
     }
-    
+
     public function getParentCategory($category)
     {
         $categories = $this->getCategoryTree();
@@ -59,10 +58,9 @@ class Category extends Model
                 unset($categories[$k]);
             }
         }
-        
         return $categories;
     }
-    
+
     public function getSelectCategory()
     {
         // 获取所有树状结构处理后的分类数据
@@ -76,7 +74,7 @@ class Category extends Model
         //返回除了等级三的所有分类
         return $categories;
     }
-    
+
     public function hasChild($category)
     {
         // 获取树状结构分类数据
@@ -84,12 +82,11 @@ class Category extends Model
         // 调用arr组件的判断是否有子集方法,如果有,返回真,如果没有,返回假
         return Arr::hasChild($data, $category['id'], 'pid');
     }
-    
-    public function gitListCategory()
+
+    public function getListCategory()
     {
         // 用页面上传过来 带id 的参数 来找 子集
         $notLevelThree = Category::where('pid',$this->id)->first();
-//        dd($notLevelThree->toArray());
         //如果有孩子  , 在试着去找它的子集 说明是一级 或者 二级属性
         // 可以再往下找
         if ($notLevelThree){
@@ -113,7 +110,7 @@ class Category extends Model
                 $attrIds = CategoryGoodsAttribute::whereIn('category_id',$levelThree)->pluck('attribute_id');
                 // 用取到的 属性ID 去属性表匹配商品属性
                 $attrs = GoodsAttribute::whereIn('id',$attrIds)->get();
-    
+
             }else{
                 //如果到这块, 说明是二级分类
                 //用他二级的ID 找到它的三级分类的数据
@@ -121,7 +118,7 @@ class Category extends Model
                 $goods = Goods::whereIn('thirdCategory',$thirdLevel)->get();
                 $attrIds = CategoryGoodsAttribute::whereIn('category_id',$thirdLevel)->pluck('attribute_id');
                 $attrs = GoodsAttribute::whereIn('id',$attrIds)->get();
-    
+
             }
         }else{
             //如果一个判断都没进, 是为三级分类直接取数据
@@ -137,4 +134,6 @@ class Category extends Model
             'attrs' => $attrs,
         ];
     }
+    
+    
 }
